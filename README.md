@@ -5,4 +5,3 @@
 Build an API server and integrate CRUD functionality with a relational database(SQL)
 
 ## Project UML
-
