@@ -2,9 +2,7 @@
 
 require('dotenv').config();
 const { Sequelize, DataTypes } = require('sequelize');
-
-const SQL_URL = process.env.SQL_URL || 'sqlite: memory';
-
+const SQL_URL = process.env.SQL_URL || 'sqlite:memory';
 const sequilize = new Sequelize(SQL_URL);
 
 const Food = sequilize.define('Food', {
@@ -26,6 +24,6 @@ const Food = sequilize.define('Food', {
 });
 
 module.exports = {
-  Sequelize,
+  sequelize,
   Food
 };

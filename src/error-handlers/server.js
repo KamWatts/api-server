@@ -1,14 +1,16 @@
-const cors = require('cors');
-const express = require('express')
-const router = ('/router');
+'use strict'
 
-const app = express;
+const express = require('express')
+const app = express();
+
+const cors = require('cors');
+const router = ('/router');
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/clothes');
-app.use('/food');
+app.use('/clothes', router);
+app.use('/food',router);
 
 module.exports = {
   app,
