@@ -3,54 +3,58 @@
 const express = require('express');
 const router = express.Router();
 
+const { Food } = require('../models/food');
+
 router.get('/', readFood);
 router.get('/:id', readFood);
 router.post('/', createFood);
 router.put('/:id', updateFood);
 router.delete('/:id', deleteFood);
 
-const data = [];
-
-function readFood(request, response, next) {
+async function readFood(request, response, next) {
+  let data;
+  if (request.params.id) {
+    data = await Food.findByPk(request.params.id);
+  } else {
+    data = await Food.findAll();
+  }
   response.json(data);
 }
 
-function createFood(request, response, next) {
-  const food = {
+async function createFood(request, response, next) {
+  const food = await Food.create({
     name: request.body.name,
     price: request.body.price,
-    vegeterian: request.body.vegeterian,
-    id: data.length + 1
-  }
-  data.push(food);
+    vegetarian: request.body.vegetarian,
+  });
   response.json(food);
 }
 
-function updateFood(request, response, next) {
-
-  let id = request.params.id;
-    const food = {
-      name: request.body.name,
-      price: request.body.price,
-      vegeterian: request.body.vegeterian,
-      id: id
-    }
-    // update the array  
-    let index = id - 1;
-    data[index] = food;
-    response.send(food);
+async function updateFood(request, response, next) {
+  const id = request.params.id;
+  const food = {
+    name: request.body.name,
+    price: request.body.price,
+    vegetarian: request.body.vegetarian,
   }
-
-
-function deleteFood(request, response, next) {
-
-  let id = request.params.id;
-    const food = {
-      name: request.body.name,
-      price: request.body.price,
-      vegetarian: request.body.vegetarian,
-      id: data.length + 1
-    }
-    data.push(id, food);
-    response.json(id, food);
+  await Food.update(food, {
+    where: {
+      id: id,
+    },
+  });
+  response.send(food);
 }
+
+async function deleteFood(request, response, next) {
+  const id = request.params.id;
+  await Food.destroy({
+    where: {
+      id: id,
+    },
+  });
+  response.sendStatus(204);
+}
+
+module.exports = {
+  router
+};

@@ -3,57 +3,61 @@
 const express = require('express');
 const router = express.Router();
 
+const { Clothes } = require('../models/clothes');
+
 router.get('/', readClothes);
 router.get('/:id', readClothes);
 router.post('/', createClothes);
 router.put('/:id', updateClothes);
 router.delete('/:id', deleteClothes);
 
-const data = [];
-
-function readClothes(request, response, next) {
+async function readClothes(request, response, next) {
+  let data;
+  if (request.params.id) {
+    data = await Clothes.findByPk(request.params.id);
+  } else {
+    data = await Clothes.findAll();
+  }
   response.json(data);
 }
 
-function createClothes(request, response, next) {
+async function createClothes(request, response, next) {
   const clothes = {
     name: request.body.name,
     fabric: request.body.fabric,
     brand: request.body.brand,
     pairs: request.body.pairs,
-    id: data.length + 1
   }
-  data.push(clothes);
-  response.json(clothes);
+  const result = await Clothes.create(clothes);
+  response.json(result);
 }
 
-function updateClothes(request, response, next) {
-
-  let id = request.params.id;
-    const clothes = {
-      name: request.body.name,
-      fabric: request.body.fabric,
-      brand: request.body.brand,
-      pairs: request.body.pairs,
-      id: id
-    }
-    // update the array  
-    let index = id - 1;
-    data[index] = clothes;
-    response.send(clothes);
+async function updateClothes(request, response, next) {
+  const id = request.params.id;
+  const clothes = {
+    name: request.body.name,
+    fabric: request.body.fabric,
+    brand: request.body.brand,
+    pairs: request.body.pairs,
   }
-
-
-function deleteClothes(request, response, next) {
-
-  let id = request.params.id;
-    const clothes = {
-      name: request.body.name,
-      fabric: request.body.fabric,
-      brand: request.body.brand,
-      pairs: request.body.pairs,
-      id: data.length + 1
-    }
-    data.push(id, clothes);
-    response.json(id, clothes);
+  await Clothes.update(clothes, {
+    where: {
+      id: id,
+    },
+  });
+  response.send(clothes);
 }
+
+async function deleteClothes(request, response, next) {
+  const id = request.params.id;
+  await Clothes.destroy({
+    where: {
+      id: id,
+    },
+  });
+  response.sendStatus(204);
+}
+
+module.exports = {
+  router
+};
