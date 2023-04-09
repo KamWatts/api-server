@@ -12,8 +12,15 @@ const sequelize = new Sequelize(SQL_URL);
 const foodModel = food(sequelize, DataTypes);
 const clothesModel = clothes(sequelize, DataTypes);
 
+
+foodModel.hasMany(FoodItemModel, {foreignKey: 'foodId', sourceKey: 'id'});
+FoodItemModel.belongsTo(foodModel, {foreignKey: 'id', targetKey: 'foodId'})
+
+clothesModel.hasMany(ClothesItemModel, {foreignKey: clothesId, sourceKey: 'id'});
+ClothesItemModel.belongsTO(clothesModel, {foreignKey: 'id', targetKey: 'clothesId'});
+
 module.exports = {
   sequelize,
-  foodModel,
-  clothesModel
+  FoodItemMode: foodModel,
+  ClothesItemModel: clothesModel
 };

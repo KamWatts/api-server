@@ -1,10 +1,8 @@
 'use strict'
 
 function logger(request, response, next) {
-  console.log('logger is operational');
+  console.log(`${request.method} ${request.path}`);
   next();
 }
 
-module.exports = {
-  logger
-}
+module.exports = logger;
