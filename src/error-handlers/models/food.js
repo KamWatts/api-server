@@ -26,4 +26,4 @@ const Food = sequilize.define('Food', {
 module.exports = {
   sequelize,
   Food
-};
+}
