@@ -9,7 +9,6 @@ const router = ('/router');
 app.use(cors());
 app.use(express.json());
 
-app.use('/clothes', router);
 app.use('/food',router);
 
 module.exports = {
