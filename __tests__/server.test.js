@@ -1,57 +1,55 @@
-'use strict'
+'use strict';
+
+const express = require('express');
+const app = express();
+app.use(express());
 
 const supertest = require('supertest');
-const server = require('../src/error-handlers/server');
-const app = server.app;
-// const db1= require('../src/models/clothes.js');
-// const db2 = require('../src/models/food.js')
-const handle500 = require('../src/error-handlers/error-handlers/500')
-const request = require(supertest)(app);
-
-// // beforeAll
-// beforeAll( async () => {
-//   await db1.sequelize.sync();
-//   await db2.sequelize.sync(); // connects and creates the table
-// })
-// // afterALL
-// afterAll( async () => {
-//   await db1.sequelize.drop();
-//   await db2.sequelize.drop();
-// })
 
 describe('Testing our server routes', () => {
+
   test('404 bad route', async () => {
-    const response = await request.get('/baaad-goat-route');
+    const response = await supertest(app).get('/bad-goat-route');
     expect(response.status).toEqual(404);
   });
-  test('404 bad method', async () => {
-    let response = await request.put('/clothes');
-    expect(response.status).toEqual(404);
-  });
-  test('500 for Internal Server Issues', async () => {
-    const request = {};
-    const response = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+
+  test('Should send 201 for successful POSTing', async () => {
+    const req = {
+      name: 'Tacos',
+      price: 1.00,
+      vegetarian: true
     }
-    const next = jest.fn();
+    const response = await supertest(app).post('/food').send(req)
+    expect(response.status).toEqual(201);
+  });
 
-    handle500(null, request, response, next);
-
-    // let response = await request.get('/clothes');
-
-    expect(response.status).toHaveBeenCalledWith(500);
-    expect(response.json).toHaveBeenCalledWith({error: 'Internal Server Having Issues'});
-  })
-
-  test('Should respond with 200 status code', async () => {
-    const name = "Any name";
-    const response = await request.get(`/food?food=${food}`)
+  test('Should send 200 for successful GET', async () => {
+    const response = await supertest(app).get('/food/anyName')
     expect(response.status).toEqual(200);
-    expect(response.body).toEqual({ name: 'Any name'});
+  });
 
-  })
-  // xtest('200 for READ ALL clothes', async () => {});
-  // xtest('200 for READ ONE cloth', async () => {});
-  // xtest('200 for UPDATE clothes', async () => {});
-  // xtest('200 for DELETE clothes', async () => {});
+  test('Should send 200 for DELETE', async () => {
+    const response = await supertest(app).delete('/food/anyName')
+    expect(response.status).toBe(200)
+  });
+
+  test('Should respond with 200 on successful PUT', async () => {
+    const req = {
+      name: 'Chicken Tikka Masala',
+      price: 20.00, 
+      vegetarian: true
+    }
+    const response = await supertest(app).put('/food/newEndPoint').send(req)
+    expect(response.status).toBe(200)
+  });
+
+  test('Should respond with 200 for successful PATCH', async () => {
+    const req = {
+      name: 'Brisket pho',
+      price: 10.00,
+      vegetarian: true
+    }
+    const response = await supertest(app).patch(`/food/10`).send(req);
+    expect(response.status).toBe(200);
+  });
+});

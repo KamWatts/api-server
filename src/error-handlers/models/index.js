@@ -1,29 +1,24 @@
-'use strict'
 // barrel index.js file
-
 require('dotenv').config();
 const { Sequelize, DataTypes } = require('sequelize');
 
 
 const food = require('./food');
-const clothes = require('./clothes');
+const foodItem = require('./food-item');
 
 const SQL_URL = process.env.SQL_URL || 'sqlite:memory';
-
 const sequelize = new Sequelize(SQL_URL);
 
+
 const foodModel = food(sequelize, DataTypes);
-const clothesModel = clothes(sequelize, DataTypes);
+const foodItemModel = foodItem(sequelize, DataTypes);
 
 
-foodModel.hasMany(FoodItemModel, {foreignKey: 'foodId', sourceKey: 'id'});
-FoodItemModel.belongsTo(foodModel, {foreignKey: 'id', targetKey: 'foodId'})
-
-clothesModel.hasMany(ClothesItemModel, {foreignKey: clothesId, sourceKey: 'id'});
-ClothesItemModel.belongsTo(clothesModel, {foreignKey: 'id', targetKey: 'clothesId'});
+foodModel.hasMany(foodItemModel, {foreignKey: 'foodId', sourceKey: 'id'});
+foodItemModel.belongsTo(foodModel, {foreignKey: 'foodId', targetKey: 'id'}) 
 
 module.exports = {
   sequelize,
-  FoodItemMode: foodModel,
-  ClothesItemModel: clothesModel
-};
+  FoodItemModel: foodItemModel,
+  FoodModel: foodModel
+}
